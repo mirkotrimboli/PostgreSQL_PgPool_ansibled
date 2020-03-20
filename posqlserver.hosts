@@ -1,0 +1,2 @@
+[posql]
+posqlserver01 ansible_user=centos

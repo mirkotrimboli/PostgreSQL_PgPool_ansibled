@@ -1,0 +1,39 @@
+---
+- name: Upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+  tags: prerequisite
+
+- name: Install LVM2
+  yum:
+    name: lvm2.x86_64
+    state: present
+  tags: prerequisite
+
+- name: Add repository for PostgreSQL
+  yum:
+    name: https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-centos11-11-2.noarch.rpm
+    state: present
+  tags: prerequisite
+
+- name: Install PostgreSQL server packages
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - postgresql11
+    - postgresql11-server.x86_64
+    - postgresql11-contrib.x86_64
+    - postgresql11-devel.x86_64
+    - postgresql11-libs.x86_64
+    - postgresql11-plperl.x86_64
+    - python-psycopg2
+    state: present
+  tags: prerequisite
+
+- name: Upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+  tags: prerequisite
