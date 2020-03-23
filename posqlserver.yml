@@ -6,3 +6,4 @@
     - { role: posql_filesystem, tags: [ 'prerequisite' ] }
     - { role: posql_settings, tags: [ 'prerequisite' ] }
     - { role: posql_initdb, tags: [ 'prerequisite' ] }
+    - { role: posql_extensions, tags: [ 'prerequisite' ] }
