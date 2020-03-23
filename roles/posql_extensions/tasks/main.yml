@@ -30,3 +30,9 @@
   become: true
   become_user: postgis
   tags: prerequisite
+
+- name: Make sure PostgreSQL is restarted
+  systemd:
+    name: postgresql-11
+    state: restarted
+  tags: prerequisite
