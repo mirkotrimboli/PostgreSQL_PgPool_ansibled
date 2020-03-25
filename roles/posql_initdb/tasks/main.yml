@@ -32,8 +32,3 @@
   become: yes
   tags: prerequisite
 
-- name: Unconditionally reboot the machine with all defaults
-  reboot: 
-  become: yes
-  tags: prerequisite
-

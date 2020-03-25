@@ -8,18 +8,21 @@
   become_user: postgres
   tags: prerequisite
 
+- name: Create postgis role
+  postgresql_user:
+    name: postgis
+    password: postgis
+    state: present
+  become: true
+  become_user: postgres
+  tags: configuration
+
 - name: Create a new database with name "postgis"
   postgresql_db:
     name: postgis
-  tags: prerequisite
-
-- name: Connect to postgis database and set user's password with no expire date
-  postgresql_user:
-    db: postgis
-    name: postgis
-    password: postgis
-    priv: "CONNECT/products:ALL"
-    expires: infinity
+    owner: postgis
+  become: true
+  become_user: postgres
   tags: prerequisite
 
 - name: Create extension PostGIS
@@ -28,11 +31,10 @@
     db: postgis
     state: present
   become: true
-  become_user: postgis
+  become_user: postgres
   tags: prerequisite
 
-- name: Make sure PostgreSQL is restarted
-  systemd:
-    name: postgresql-11
-    state: restarted
+- name: Unconditionally reboot the machine with all defaults
+  reboot: 
+  become: yes
   tags: prerequisite

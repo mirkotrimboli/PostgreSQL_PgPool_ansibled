@@ -3,6 +3,7 @@
   become: yes
   roles:
     - { role: posql_packages, tags: [ 'prerequisite' ] }
+    - { role: posql_postgis, tags: [ 'prerequisite' ] }
     - { role: posql_filesystem, tags: [ 'prerequisite' ] }
     - { role: posql_settings, tags: [ 'prerequisite' ] }
     - { role: posql_initdb, tags: [ 'prerequisite' ] }
