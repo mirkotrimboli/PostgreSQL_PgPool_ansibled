@@ -14,8 +14,8 @@ This playbook aims to produce a cluster PostgreSQL with PgPool balancing.
 * create a private key for the user "postgres", rename the produced files as "postgres.pem, postgres.pub" and place them in the "keys" folder
 * Compile file in group_vars directory as is it is explained.
 * Then you must to move into the folder with command: "cd /absolute/path/to/playbook".
-* Finally you can run the code with command: "ansible-playbook -i posql-pgpool.hosts posql-pgpool.yaml".
+* Finally you can run the code with command: "ansible-playbook -i posql-pgpool.hosts posql-pgpool.yml".
 
 # For use on Cloud
 * Edit playbook hosts file without references to password.
-* You can run the code with command: "ansible-playbook -i posql-pgpool.hosts posql-pgpool.yaml --key-file=/absolute/path/to/key.pem".
+* You can run the code with command: "ansible-playbook -i posql-pgpool.hosts posql-pgpool.yml --key-file=/absolute/path/to/key.pem".
