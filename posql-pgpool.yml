@@ -23,7 +23,7 @@
 - hosts: postgresql01 # Verificare bootstrap / utente 
   become: yes
   vars_files:
-    - "group_vars/pascale_pro_postgresql"
+    - "group_vars/cluster"
     - "group_vars/vars/posql_tuning24.yml"
   roles:
     - { role: vars_postgresql_bootstrap, tags: [ 'configuration' ] }

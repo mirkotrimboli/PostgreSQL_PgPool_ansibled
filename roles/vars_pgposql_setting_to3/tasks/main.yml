@@ -286,6 +286,10 @@
     backup: yes
   tags: configuration
 
+- name: Change home directory for user {{vars_appuser}}
+  shell: usermod -d {{vars_apphome}} {{vars_appuser}}
+  tags: configuration
+
 - name: restart service rsyslog, also issue daemon-reload to pick up config changes
   systemd:
     state: restarted

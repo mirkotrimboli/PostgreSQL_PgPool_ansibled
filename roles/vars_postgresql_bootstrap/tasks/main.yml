@@ -23,6 +23,8 @@
 
 - name: Installing code for RedHat family
   shell: /usr/pgsql-{{vars_version}}/bin/postgresql-{{vars_version}}-setup initdb postgresql-{{vars_version}}
+  become: true
+  become_user: "{{vars_appuser}}"
   when:
     - foundedFiles.matched < 4
     - (ansible_facts['os_family'] == "RedHat")
@@ -30,6 +32,8 @@
 
 - name: Installing code for Debian family
   shell: /usr/lib/postgresql/{{vars_version}}/bin/initdb -D {{vars_data}}
+  become: true
+  become_user: "{{vars_appuser}}"
   when:
     - foundedFiles.matched < 4
     - (ansible_facts['os_family'] == "Debian")
