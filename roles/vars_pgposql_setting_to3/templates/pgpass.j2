@@ -1,0 +1,12 @@
+{{ ip1 }}:5433:replication:repl:repl
+{{ ip2 }}:5433:replication:repl:repl
+{{ ip3 }}:5433:replication:repl:repl
+{{ ip1 }}:5433:postgres:postgres:postgres
+{{ ip2 }}:5433:postgres:postgres:postgres
+{{ ip3 }}:5433:postgres:postgres:postgres
+{{ ip1 }}:5433:*:pgpool:pgpool
+{{ ip2 }}:5433:*:pgpool:pgpool
+{{ ip3 }}:5433:*:pgpool:pgpool
+*:*:*:postgres:postgres
+*:*:replication:repl:repl
+*:*:*:pgpool:pgpool

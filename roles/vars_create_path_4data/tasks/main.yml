@@ -1,0 +1,9 @@
+---
+- name: Create directory "{{vars_data}}"
+  file:
+    path: "{{vars_data}}"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0755'
+    state: directory
+  tags: requisite 

@@ -1,0 +1,36 @@
+---
+- name: Ensure ownership directory for {{vars_data}}
+  file:
+    path: "{{vars_data}}"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0700'
+    state: directory
+  tags: configuration 
+
+- name: Check if "{{vars_data}}" is empty - Exit if not
+  find:
+    paths: ["{{vars_data}}"]
+    patterns: '*.*'
+  register: foundedFiles
+  tags: configuration
+
+- name: Thinking to do
+  debug:
+    msg: "Install files found. Skipping installation"
+  when: foundedFiles.matched > 2
+  tags: configuration
+
+- name: Installing code for RedHat family
+  shell: /usr/pgsql-{{vars_version}}/bin/postgresql-{{vars_version}}-setup initdb postgresql-{{vars_version}}
+  when:
+    - foundedFiles.matched < 4
+    - (ansible_facts['os_family'] == "RedHat")
+  tags: configuration
+
+- name: Installing code for Debian family
+  shell: /usr/lib/postgresql/{{vars_version}}/bin/initdb -D {{vars_data}}
+  when:
+    - foundedFiles.matched < 4
+    - (ansible_facts['os_family'] == "Debian")
+  tags: configuration

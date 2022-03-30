@@ -1,0 +1,32 @@
+---
+- name: Create partition for LVM
+  parted:
+    device: "/dev/{{dev2}}"
+    number: 1
+    flags: [ lvm ]
+    state: present
+    part_start: 0%
+    part_end: 100%
+  tags: requisite
+
+- name: Create volume group
+  lvg:
+    vg: vg{{vars_map}}
+    pvs: ["/dev/{{dev2}}1"]
+    state: present
+  tags: requisite
+
+- name: Create logical volume
+  lvol:
+    vg: vg{{vars_map}}
+    lv: lv{{vars_map}}
+    size: 100%VG
+    active: yes
+    state: present
+  tags: requisite
+
+- name: Format volume with XFS
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/vg{{vars_map}}/lv{{vars_map}}
+  tags: requisite

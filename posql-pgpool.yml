@@ -1,0 +1,43 @@
+---
+- hosts: cluster # IDEMPOTENTE
+  become: yes
+  roles:
+    - { role: vars_user_cando_sudo, tags: [ 'prerequisite' ] }
+    - { role: ensure_minimal_installations, tags: [ 'prerequisite' ] }
+    - { role: update_systems, tags: [ 'prerequisite' ] }
+    - { role: secure_minimal, tags: [ 'prerequisite' ] }
+#    - { role: reboot, tags: [ 'prerequisite' ] }
+    - { role: vars_add_repo, tags: [ 'requisite' ] }
+    - { role: vars_postgresql_packages, tags: [ 'requisite' ] }
+    - { role: vars_install, tags: [ 'requisite' ] }
+    - { role: vars_map_2nd_vol, tags: [ 'requisite' ] }
+    - { role: vars_create_path_4appuser, tags: [ 'requisite' ] }
+    - { role: vars_add_2nd_vol_4appuser, tags: [ 'requisite' ] }
+    - { role: vars_appuser_cando_sudo, tags: [ 'requisite' ] }
+    - { role: vars_sshkey_trust, tags: [ 'requisite' ] }
+    - { role: vars_create_path_4data, tags: [ 'requisite' ] }
+    - { role: vars_create_path_4archive, tags: [ 'requisite' ] }
+    - { role: vars_map_etc_hosts, tags: [ 'requisite' ] }
+    - { role: vars_pgposql_setting_to3, tags: [ 'configuration' ] }
+
+- hosts: postgresql01 # Verificare bootstrap / utente 
+  become: yes
+  vars_files:
+    - "group_vars/pascale_pro_postgresql"
+    - "group_vars/vars/posql_tuning24.yml"
+  roles:
+    - { role: vars_postgresql_bootstrap, tags: [ 'configuration' ] }
+    - { role: vars_postgresql_setting, tags: [ 'configuration' ] }
+
+- hosts: cluster # IDEMPOTENTE
+  become: yes
+  roles:
+    - { role: vars_ntp4client_setting, tags: [ 'requisite' ] }
+    - { role: vars_service_enabled, tags: [ 'requisite' ] }
+    - { role: vars_service_stopped, tags: [ 'requisite' ] }
+
+- hosts: cluster # IDEMPOTENTE
+  become: yes
+  serial: 1
+  roles:
+    - { role: reboot, tags: [ 'prerequisite' ] }

@@ -1,0 +1,94 @@
+---
+- name: Set conf for PostgreSQL "{{vars_version}}"
+  template:
+    src: postgresql.conf.j2
+    dest: "{{vars_data}}/postgresql.conf"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0600'
+    backup: yes
+  tags: configuration
+
+- name: Set pg_hba.conf
+  template:
+    src: pg_hba.conf.j2
+    dest: "{{vars_data}}/pg_hba.conf"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0644'
+    backup: yes
+  tags: configuration
+
+- name: Copy recovery_1st_stage_command
+  template:
+    src: recovery_1st_stage_command.j2
+    dest: "{{vars_data}}/recovery_1st_stage_command"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0777'
+    backup: yes
+  tags: configuration
+
+- name: Copy pgpool_remote_start
+  template:
+    src: pgpool_remote_start.j2
+    dest: "{{vars_data}}/pgpool_remote_start"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0777'
+    backup: yes
+  tags: configuration
+
+- name: Make sure PostgreSQL is started but disabled
+  systemd:
+    name: postgresql-{{vars_version}}
+    enabled: no
+    state: started
+  tags: configuration
+
+- name: Create pgpool role
+  postgresql_user:
+    name: pgpool
+    password: pgpool
+    port: 5433
+    role_attr_flags: LOGIN
+    state: present
+  become: "{{vars_appuser}}"
+  tags: configuration
+
+- name: Create repl role
+  postgresql_user:
+    name: repl
+    password: repl
+    port: 5433
+    role_attr_flags: REPLICATION,LOGIN
+    state: present
+  become: "{{vars_appuser}}"
+  tags: configuration
+
+- name: Create postgres role
+  postgresql_user:
+    name: postgres
+    password: postgres
+    port: 5433
+    state: present
+  become: "{{vars_appuser}}"
+  tags: configuration
+
+- name: Grant role pg_monitor to pgpool
+  postgresql_membership:
+    port: 5433
+    group: pg_monitor
+    target_role: pgpool
+    state: present
+  become: "{{vars_appuser}}"
+  tags: configuration
+
+- name: Create extension pgpool_recovery
+  postgresql_ext:
+    port: 5433
+    name: pgpool_recovery
+    db: template1
+    state: present
+  become: "{{vars_appuser}}"
+  tags: configuration

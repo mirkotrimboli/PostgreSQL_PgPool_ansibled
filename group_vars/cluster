@@ -1,0 +1,39 @@
+user: "utente"
+password: "password"
+vars_project: "acronimo_progetto"
+vars_env: "abbr_contesto"
+vars_user: "utente_valorizzato_nel_codice"
+repo_name: "postgresql-{{vars_version}}"
+gpg_key_url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+repo_url: "http://apt.postgresql.org/pub/repos/apt"
+repo_class: "focal-pgdg"
+repo_description: "{{repo_name}} apt repository"
+vars_version: "13"
+vars_package:
+  - pgpool2
+  - postgresql-{{vars_version}}-pgpool2
+  - net-tools
+  - arping
+  - ceph-common
+  - systemd-timesyncd
+dev2: "vdb"
+vars_map: "_postgresql"
+vars_apphome: "/postgresql"
+vars_appuser: "postgres"
+vars_data: "/postgresql/pg_data"
+vars_archive: "/postgresql/archive"
+ip1: "IP.IP.IP.IP"
+ip2: "IP.IP.IP.IP"
+ip3: "IP.IP.IP.IP"
+ipVIP: "IP.IP.IP.IP"
+host1: "" # Edit with hostname of node 1
+host2: "" # Edit with hostname of node 2
+host3: "" # Edit with hostname of node 3
+network: "IP.IP.IP.IP"
+pgpool_path: "/etc/pgpool2"
+pgpool_conf: "pgpool2.conf.j2"
+ntp_url: "pugot.canonical.com"
+vars_service:
+  - postgresql-{{vars_version}}
+  - pgpool2
+  - systemd-timesyncd

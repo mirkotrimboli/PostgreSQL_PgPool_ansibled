@@ -1,0 +1,89 @@
+---
+- name: Add epel release for RedHat family
+  yum:
+    name: epel-release
+    state: present
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: requisite
+
+- name: Add centos-release-scl-rh for RedHat family
+  yum:
+    name: centos-release-scl-rh
+    state: present
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: requisite
+
+- name: Install PostgreSQL-{{vars_version}} for RedHat family
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - postgresql{{vars_version}}
+    - postgresql{{vars_version}}-server
+    - postgresql{{vars_version}}-contrib
+    - postgresql{{vars_version}}-devel
+    - postgresql{{vars_version}}-libs
+    - postgresql{{vars_version}}-plperl
+    state: present
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: requisite
+  
+- name: Install psycopg2 for CentOS 7
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - python-psycopg2
+    state: present
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution_major_version'] == "7"
+  tags: requisite
+
+- name: Install psycopg2 for CentOS 8
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - python3-psycopg2
+    state: present
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution_major_version'] == "8"
+  tags: requisite
+
+#- name: Ensure PowerTools are enabled for CentOS
+#  shell: "dnf config-manager --set-enabled PowerTools"
+#  args:
+#    warn: no
+#  when: ansible_facts['distribution'] == "CentOS"
+#  tags: requisite
+
+- name: Install PostgreSQL-{{vars_version}} for Debian family
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - postgresql-{{vars_version}}
+    - python3-psycopg2
+    state: present
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite
+
+- name: Make sure PostgreSQL_main is stopped and disabled for Debian family
+  systemd:
+    name: "postgresql@{{vars_version}}-main"
+    enabled: no
+    state: stopped
+    force: yes
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite
+
+- name: Make sure PostgreSQL is stopped and disabled for Debian family
+  systemd:
+    name: postgresql
+    enabled: no
+    state: stopped
+    force: yes
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite

@@ -1,0 +1,19 @@
+---
+- name: Add {{repo_name}} repository for RedHat family
+  yum_repository:
+    name: "{{repo_name}}"
+    baseurl: "{{repo_url}}"
+    description: "{{repo_description}}"
+    gpgcheck: yes
+    gpgkey: "{{gpg_key_url}}"
+    enabled: yes
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: requisite
+
+- name: Add {{repo_name}} repository for Debian family
+  shell: |
+    curl -fsSL {{gpg_key_url}} | sudo apt-key add -
+    echo "deb {{repo_url}} {{repo_class}} main" > /etc/apt/sources.list.d/{{repo_name}}.list
+    apt update
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite

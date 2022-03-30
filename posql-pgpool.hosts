@@ -1,0 +1,4 @@
+[cluster]
+postgresql01 ansible_user={{user}} ansible_password={{password}} ansible_sudo_pass={{password}}
+postgresql02 ansible_user={{user}} ansible_password={{password}} ansible_sudo_pass={{password}}
+postgresql03 ansible_user={{user}} ansible_password={{password}} ansible_sudo_pass={{password}}

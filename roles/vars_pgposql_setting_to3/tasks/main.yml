@@ -1,0 +1,294 @@
+---
+- name: Set post.sh for RedHat family
+  template:
+    src: pgsql_sh.j2
+    dest: /etc/profile.d/pgsql.sh
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0755'
+    backup: yes
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: configuration
+
+- name: Set .pgpass
+  template:
+    src: pgpass.j2
+    dest: "{{vars_apphome}}/.pgpass"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0600'
+    backup: yes
+  tags: configuration
+
+- name: Set .pcppass
+  template:
+    src: pcppass.j2
+    dest: "{{vars_apphome}}/.pcppass"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0644'
+    backup: yes
+  tags: configuration
+
+- name: Set postgresql-{{vars_version}}.service for RedHat family
+  template:
+    src: postgresql-RH.service.j2
+    dest: /usr/lib/systemd/system/postgresql-{{vars_version}}.service
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: configuration
+
+- name: Set postgresql-{{vars_version}}.service for Debian family
+  template:
+    src: postgresql-Deb.service.j2
+    dest: /lib/systemd/system/postgresql-{{vars_version}}.service
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: configuration
+
+- name: Set pcp.conf
+  template:
+    src: pcp.conf.j2
+    dest: "{{pgpool_path}}/pcp.conf"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0644'
+    backup: yes
+  tags: configuration
+
+- name: Set pool_passwd
+  template:
+    src: pool_passwd.j2
+    dest: "{{pgpool_path}}/pool_passwd"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0644'
+    backup: yes
+  tags: configuration
+
+- name: Set pool_hba.conf
+  template:
+    src: pool_hba.conf.j2
+    dest: "{{pgpool_path}}/pool_hba.conf"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0600'
+    backup: yes
+  tags: configuration
+
+- name: Copy failover.sh
+  template:
+    src: failover.sh.j2
+    dest: "{{pgpool_path}}/failover.sh"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0777'
+    backup: yes
+  tags: configuration
+
+- name: Copy follow_master.sh
+  template:
+    src: follow_master.sh.j2
+    dest: "{{pgpool_path}}/follow_master.sh"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0777'
+    backup: yes
+  tags: configuration
+
+- name: Copy dblogs.conf for Debian family
+  template:
+    src: dblogs.conf.j2
+    dest: "/usr/lib/tmpfiles.d/dblogs.conf"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: configuration
+
+- name: Create /var/log/postgresql if it does not exist
+  file:
+    path: /var/log/postgresql
+    state: directory
+    owner: root
+    group: "{{vars_appuser}}"
+    mode: '0775'
+  tags: configuration
+
+- name: Create file postgresql.log for RedHat family
+  file:
+    path: /var/log/postgresql/postgresql.log
+    state: touch
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0660'
+    modification_time: preserve
+    access_time: preserve
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: configuration
+
+- name: Create file postgresql.log for Debian family
+  file:
+    path: /var/log/postgresql/postgresql.log
+    state: touch
+    owner: "{{vars_appuser}}"
+    group: adm
+    mode: '0660'
+    modification_time: preserve
+    access_time: preserve
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: configuration
+
+- name: Create /var/log/pgpool if it does not exist for RedHat family
+  file:
+    path: /var/log/pgpool
+    state: directory
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0775'
+  tags: configuration
+
+- name: Create /var/log/pgpool if it does not exist for Debian family
+  file:
+    path: /var/log/pgpool
+    state: directory
+    owner: "{{vars_appuser}}"
+    group: adm
+    mode: '0775'
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: configuration
+
+- name: Create file pgpool.log for RedHat family
+  file:
+    path: /var/log/pgpool/pgpool.log
+    state: touch
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0644'
+    modification_time: preserve
+    access_time: preserve
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: configuration
+
+- name: Create file pgpool.log for Debian family
+  file:
+    path: /var/log/pgpool/pgpool.log
+    state: touch
+    owner: syslog
+    group: adm
+    mode: '0640'
+    modification_time: preserve
+    access_time: preserve
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: configuration
+
+- name: Set sysconfig/pgpool for RedHat family
+  template:
+    src: pgpool.j2
+    dest: /etc/sysconfig/pgpool
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: configuration
+
+- name: Copy rsyslog.conf for RedHat family
+  template:
+    src: rsyslog.conf.j2
+    dest: /etc/rsyslog.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: configuration
+
+- name: Copy rsyslog.conf for Debian family
+  template:
+    src: 50-default.conf.j2
+    dest: /etc/rsyslog.d/50-default.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: no
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: configuration
+
+- name: Copy syslog for RedHat family
+  template:
+    src: syslog.j2
+    dest: /etc/logrotate.d/syslog
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: configuration
+
+- name: Copy syslog for Debian family
+  template:
+    src: rsyslog.j2
+    dest: /etc/logrotate.d/rsyslog
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: configuration
+
+- name: Copy pgpool.service for RedHat family
+  template:
+    src: pgpool.service.j2
+    dest: /usr/lib/systemd/system/pgpool-II-{{vars_version}}.service
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: configuration
+
+- name: Copy pgpool2.service for Debian family
+  template:
+    src: pgpool2.service.j2
+    dest: /lib/systemd/system/pgpool2.service
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: configuration
+
+- name: Set pgpool.conf
+  template:
+    src: "{{pgpool_conf}}"
+    dest: "{{pgpool_path}}/pgpool.conf"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0600'
+    backup: yes
+  tags: configuration
+
+- name: Set pgpool_node_id
+  template:
+    src: pgpool_node_id.j2
+    dest: "{{pgpool_path}}/pgpool_node_id"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0600'
+    backup: yes
+  tags: configuration
+
+- name: restart service rsyslog, also issue daemon-reload to pick up config changes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: rsyslog
+  tags: configuration

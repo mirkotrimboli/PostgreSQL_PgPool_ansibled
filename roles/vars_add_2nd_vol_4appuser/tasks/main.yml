@@ -1,0 +1,18 @@
+---
+- name: Edit fstab and mount the XFS volume
+  mount:
+    name: "{{vars_apphome}}"
+    src: /dev/vg{{vars_map}}/lv{{vars_map}}
+    fstype: xfs
+    opts: "noatime"
+    state: mounted
+  tags: requisite
+
+- name: Ensure ownership directory for "{{vars_apphome}}"
+  file:
+    path: "{{vars_apphome}}"
+    owner: "{{vars_appuser}}"
+    group: "{{vars_appuser}}"
+    mode: '0755'
+    state: directory
+  tags: requisite 
