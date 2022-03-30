@@ -1,30 +1,21 @@
-# ansible-posqlserver-onAWS
+# PostgreSQL_PgPool_ansibled
+This playbook aims to produce a cluster PostgreSQL with PgPool balancing.
 
-Delivery of a PostgreSQL Stand Alone server on AWS
+# Release note
+* The code work on multiple Operative Systems Linux based.
+* It is tested with: Ubuntu 18.04LTS, 20.04LTS, CentOS 7.x, 8.x
+* It is meant for to get a cluster Ceph predisposed behind a proxy, if necessary you can enable tasks in playbook yaml file.
+* It is meant for work also on Cloud on IaaS.
 
-# Prerequisiti AWS
+# To use this code:
+* Download the playbook.
+* Edit your hosts file with IP and hostnames of your servers.
+* Edit playbook hosts file with hostnames of your servers.
+* create a private key for the user "postgres", rename the produced files as "postgres.pem, postgres.pub" and place them in the "keys" folder
+* Compile file in group_vars directory as is it is explained.
+* Then you must to move into the folder with command: "cd /absolute/path/to/playbook".
+* Finally you can run the code with command: "ansible-playbook -i posql-pgpool.hosts posql-pgpool.yaml".
 
-Assicurarsi che sulla macchina sia presente:
-
-* Un volume aggiuntivo per i dati
-* Service Group con regole Inbound aperte per la connessione SSH
-* che sia stato dato un ip alla scheda di rete
-
-Sul server Ansible:
-
-* Fare il download con git clone
-* All'interno dell'inventory path inserire la "chiave.pem" per l'accesso in SSH
-* Modificare il file hosts del server ansible aggiungendo gli ip degli host da raggiungere e nominandoli come specificato in posqlpgpool.hosts
-
-# Installazione e configurazione iniziale dei nodi 
-
-se necessario modificare le variabili sotto group_vars/all/vars.yml
-
-* datadev_name: nvme1n1
-* postgresql_dir: "/postgresql"
-* postgresql_data: "/postgresql/pg_data"
-* postgresql_arc: "/postgresql/archive"
-
-lanciare il playbook ansible con il comando:
-
-* ansible-playbook -i posqlpgpool.hosts posqlpgpool.yml --key-file=./chiave.pem
+# For use on Cloud
+* Edit playbook hosts file without references to password.
+* You can run the code with command: "ansible-playbook -i posql-pgpool.hosts posql-pgpool.yaml --key-file=/absolute/path/to/key.pem".
