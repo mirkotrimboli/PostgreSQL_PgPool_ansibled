@@ -1,0 +1,132 @@
+---
+- name: Unarchive awscliv2.zip in /home/{{vars_user}}
+  unarchive:
+    src: "{{vars_dest}}/awscliv2.zip"
+    dest: "/home/{{vars_user}}"
+    owner: root
+    group: root
+    mode: '0755'
+  tags: requisite
+
+- name: Check if /usr/local/aws-cli exist - Exit if not
+  stat:
+    path: /usr/local/aws-cli
+  register: foundedDir
+  tags: requisite
+
+- name: Thinking to do
+  debug:
+    msg: "Directory exist. Skipping installation"
+  when: foundedDir.stat.isdir is defined
+  tags: requisite
+
+- name: Installing code
+  shell: /root/aws/install
+  when: foundedDir.stat.isdir is not defined
+  become: true
+  tags: requisite
+
+- name: Create file aws.sh
+  copy:
+    dest: /etc/profile.d/aws.sh
+    content: |
+      export PATH=$PATH:/usr/local/bin
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  tags: requisite
+
+- name: Create aws-escalation script
+  become: true
+  template:
+    src: aws-escalation.j2
+    dest: /usr/local/bin/aws-escalation.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags: requisite
+
+- name: Create aws-de-escalation script
+  become: true
+  template:
+    src: aws-de-escalation.j2
+    dest: /usr/local/bin/aws-de-escalation.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags: requisite
+
+- name: Create route file for default interface
+  become: true
+  template: 
+    src: routedefault.j2
+    dest: /etc/sysconfig/network-scripts/route-{{ pri_net_int }} 
+    owner: root
+    group: root
+    mode: 0644
+  tags: requisite
+
+- name: Create route file for vip interface
+  become: true
+  template: 
+    src: routevip.j2
+    dest: /etc/sysconfig/network-scripts/route-{{ sec_net_int }}
+    owner: root 
+    group: root 
+    mode: 0644
+  tags: requisite
+
+- name: Create rule file for default interface
+  become: true
+  template:
+    src: ruledefault.j2
+    dest: /etc/sysconfig/network-scripts/rule-{{ pri_net_int }}
+    owner: root
+    group: root
+    mode: 0644
+  tags: requisite
+
+- name: Create rule file for vip interface
+  become: true
+  template:
+    src: rulevipdev.j2
+    dest: /etc/sysconfig/network-scripts/rule-{{ sec_net_int }}
+    owner: root
+    group: root
+    mode: 0644
+  tags: requisite
+
+- name: Create vip interface config file
+  become: true
+  template:
+    src: ifcfg-eth.j2
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ sec_net_int  }}
+    owner: root
+    group: root
+    mode: 0644
+  tags: requisite
+
+- name: Insert 100 t1 entry in /etc/iproute2/rt_tables
+  become: true
+  lineinfile:
+    path: /etc/iproute2/rt_tables
+    line: '100 t1'
+  tags: requisite
+
+- name: Insert 101 t2 entry in /etc/iproute2/rt_tables
+  become: true
+  lineinfile:
+    path: /etc/iproute2/rt_tables
+    line: '101 t2'
+  tags: requisite
+
+- name: Copy sysctl parameter
+  become: true
+  template:
+    src: 98-2netaws.conf.j2
+    dest: /etc/sysctl.d/98-2netaws.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags: requisite

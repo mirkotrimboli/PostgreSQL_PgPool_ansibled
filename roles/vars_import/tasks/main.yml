@@ -1,0 +1,11 @@
+---
+- name: Import "{{vars_import}}"
+  template:
+    src: "{{ lookup('file', 'packages/{{item}}') }}"
+    dest: "{{vars_dest}}"
+    owner: root
+    group: root
+    mode: '0777'
+    backup: yes
+  loop: "{{vars_import}}"
+  tags: prerequisite

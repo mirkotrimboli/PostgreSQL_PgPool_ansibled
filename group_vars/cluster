@@ -1,8 +1,11 @@
-user: "utente"
-password: "password"
-vars_project: "acronimo_progetto"
-vars_env: "abbr_contesto"
-vars_user: "utente_valorizzato_nel_codice"
+user: "" # username 
+password: "" # password
+vars_user: "{{user}}"
+vars_project: "" # Edit with your project name
+vars_env: "" # Edit with your env type, for example: "svi"
+#vars_import:  # ONLY for AWS environment
+#  - awscliv2.zip # ONLY for AWS environment
+#vars_dest: "/home/{{vars_user}}"   # ONLY for AWS environment
 repo_name: "postgresql-{{vars_version}}"
 gpg_key_url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
 repo_url: "http://apt.postgresql.org/pub/repos/apt"
@@ -14,26 +17,34 @@ vars_package:
   - postgresql-{{vars_version}}-pgpool2
   - net-tools
   - arping
-  - ceph-common
-  - systemd-timesyncd
-dev2: "vdb"
+  - unzip
+  - cloud-utils
+#  - ceph-common # ONLY for Ceph integration
+#  - systemd-timesyncd # ONLY for NTP integrtion
+#  - chrony  # ONLY for NTP integrtion for AWS environment
+dev2: "vdb" # Edit with name of your device
 vars_map: "_postgresql"
 vars_apphome: "/postgresql"
 vars_appuser: "postgres"
 vars_data: "/postgresql/pg_data"
 vars_archive: "/postgresql/archive"
-ip1: "IP.IP.IP.IP"
-ip2: "IP.IP.IP.IP"
-ip3: "IP.IP.IP.IP"
-ipVIP: "IP.IP.IP.IP"
+ip1: "IP.IP.IP.IP" # Edit with IP of node 1
+ip2: "IP.IP.IP.IP" # Edit with IP of node 2
+ip3: "IP.IP.IP.IP" # Edit with IP of node 3
+ipVIP: "IP.IP.IP.IP" # Edit with VIP 
 host1: "" # Edit with hostname of node 1
 host2: "" # Edit with hostname of node 2
 host3: "" # Edit with hostname of node 3
 network: "IP.IP.IP.IP"
+#pri_net_int: "ens5" # ONLY for AWS environment
+#sec_net_int: "eth0" # ONLY for AWS environment
+#aws_netint_id: "eni-08770b5291f7eee93" # ONLY for AWS environment
 pgpool_path: "/etc/pgpool2"
 pgpool_conf: "pgpool2.conf.j2"
-ntp_url: "pugot.canonical.com"
+#ntp_url: "pugot.canonical.com" # ONLY for NTP integrtion
 vars_service:
   - postgresql-{{vars_version}}
   - pgpool2
-  - systemd-timesyncd
+#  - systemd-timesyncd # ONLY for NTP integrtion
+#  - chrony  # ONLY for NTP integrtion for AWS environment
+  

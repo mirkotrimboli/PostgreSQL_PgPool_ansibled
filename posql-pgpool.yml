@@ -4,6 +4,7 @@
   roles:
     - { role: vars_user_cando_sudo, tags: [ 'prerequisite' ] }
     - { role: ensure_minimal_installations, tags: [ 'prerequisite' ] }
+    - { role: vars_import, tags: [ 'prerequisite' ] }
     - { role: update_systems, tags: [ 'prerequisite' ] }
     - { role: secure_minimal, tags: [ 'prerequisite' ] }
 #    - { role: reboot, tags: [ 'prerequisite' ] }
@@ -18,6 +19,7 @@
     - { role: vars_create_path_4data, tags: [ 'requisite' ] }
     - { role: vars_create_path_4archive, tags: [ 'requisite' ] }
     - { role: vars_map_etc_hosts, tags: [ 'requisite' ] }
+#    - { role: vars_awscli_setting, tags: [ 'requisite' ] }
     - { role: vars_pgposql_setting_to3, tags: [ 'configuration' ] }
 
 - hosts: postgresql01 # Verificare bootstrap / utente 
@@ -32,7 +34,7 @@
 - hosts: cluster # IDEMPOTENTE
   become: yes
   roles:
-    - { role: vars_ntp4client_setting, tags: [ 'requisite' ] }
+#    - { role: vars_ntp4client_setting, tags: [ 'requisite' ] }
     - { role: vars_service_enabled, tags: [ 'requisite' ] }
     - { role: vars_service_stopped, tags: [ 'requisite' ] }
 
