@@ -61,25 +61,6 @@
   when: (ansible_facts['os_family'] == "Debian")
   tags: requisite
 
-- name: Set iptables for Debian family
-  shell: |
-    iptables -F -t mangle
-    iptables -t mangle -I OUTPUT -s {{ipVIP}} -o {{ sec_net_int }} -j MARK --set-mark 1
-    iptables-save > /etc/iptables/rules.v4 && ip6tables-save > /etc/iptables/rules.v6
-  become: true
-  when: (ansible_facts['os_family'] == "Debian")
-  tags: requisite
-
-- name: Create new_rt_table for Debian family
-  copy:
-    dest: /etc/iproute2/rt_tables
-    content: |
-      1 new_rt_table
-    backup: yes
-  become: true
-  when: (ansible_facts['os_family'] == "Debian")
-  tags: requisite
-
 - name: Create aws-escalation script for RedHat family
   template:
     src: aws-escalation_centos.j2
@@ -179,6 +160,28 @@
   when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
+- name: Create if_cmd_up.sh for Debian family
+  template:
+    src: if_cmd_up.sh.j2
+    dest: /usr/local/bin/if_cmd_up.sh
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite
+
+- name: Create if_cmd_down.sh for Debian family
+  template:
+    src: if_cmd_down.sh.j2
+    dest: /usr/local/bin/if_cmd_down.sh
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite
+
 - name: Insert 100 t1 entry in /etc/iproute2/rt_tables for RedHat family
   lineinfile:
     path: /etc/iproute2/rt_tables
@@ -193,4 +196,23 @@
     line: '101 t2'
   become: true
   when: (ansible_facts['os_family'] == "RedHat")
+  tags: requisite
+
+- name: Set iptables for Debian family
+  shell: |
+    iptables -F -t mangle
+    iptables -t mangle -I OUTPUT -s {{ipVIP}} -o {{ sec_net_int }} -j MARK --set-mark 1
+    iptables-save > /etc/iptables/rules.v4 && ip6tables-save > /etc/iptables/rules.v6
+  become: true
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite
+
+- name: Create new_rt_table for Debian family
+  copy:
+    dest: /etc/iproute2/rt_tables
+    content: |
+      1 new_rt_table
+    backup: yes
+  become: true
+  when: (ansible_facts['os_family'] == "Debian")
   tags: requisite
