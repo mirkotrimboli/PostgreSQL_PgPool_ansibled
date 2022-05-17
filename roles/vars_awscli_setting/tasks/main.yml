@@ -22,7 +22,7 @@
   tags: requisite
 
 - name: Installing code
-  shell: /root/aws/install
+  shell: "/home/{{vars_user}}/aws/install"
   when: foundedDir.stat.isdir is not defined
   become: true
   tags: requisite
@@ -61,21 +61,23 @@
   when: (ansible_facts['os_family'] == "Debian")
   tags: requisite
 
-- name: Set iptables 
+- name: Set iptables for Debian family
   shell: |
     iptables -F -t mangle
-    iptables -t mangle -I OUTPUT -s {{ipVIP} -o {{ sec_net_int }} -j MARK --set-mark 1
+    iptables -t mangle -I OUTPUT -s {{ipVIP}} -o {{ sec_net_int }} -j MARK --set-mark 1
     iptables-save > /etc/iptables/rules.v4 && ip6tables-save > /etc/iptables/rules.v6
   become: true
+  when: (ansible_facts['os_family'] == "Debian")
   tags: requisite
 
-- name: Create new_rt_table
+- name: Create new_rt_table for Debian family
   copy:
     dest: /etc/iproute2/rt_tables
     content: |
       1 new_rt_table
     backup: yes
   become: true
+  when: (ansible_facts['os_family'] == "Debian")
   tags: requisite
 
 - name: Create aws-escalation script for RedHat family
