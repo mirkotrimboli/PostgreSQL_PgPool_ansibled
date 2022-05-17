@@ -1,5 +1,5 @@
 ---
-- name: Unarchive awscliv2.zip in /home/{{vars_user}}
+- name: Unarchive awscliv2.zip in {{vars_dest}}
   unarchive:
     src: "{{vars_dest}}/awscliv2.zip"
     dest: "/home/{{vars_user}}"
