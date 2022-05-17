@@ -6,6 +6,7 @@
     owner: root
     group: root
     mode: '0755'
+  become: true
   tags: requisite
 
 - name: Check if /usr/local/aws-cli exist - Exit if not
@@ -35,98 +36,160 @@
     group: root
     mode: '0644'
     backup: yes
+  become: true
   tags: requisite
 
-- name: Create aws-escalation script
-  become: true
+- name: Copy sysctl parameter for RedHat family
   template:
-    src: aws-escalation.j2
+    src: netaws_centos.conf.j2
+    dest: /etc/sysctl.d/netaws.conf
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  when: (ansible_facts['os_family'] == "RedHat")
+  tags: requisite
+
+- name: Copy sysctl parameter for Debian family
+  template:
+    src: netaws_ubuntu.conf.j2
+    dest: /etc/sysctl.d/netaws.conf
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite
+
+- name: Set iptables 
+  shell: |
+    iptables -F -t mangle
+    iptables -t mangle -I OUTPUT -s {{ipVIP} -o {{ sec_net_int }} -j MARK --set-mark 1
+    iptables-save > /etc/iptables/rules.v4 && ip6tables-save > /etc/iptables/rules.v6
+  become: true
+  tags: requisite
+
+- name: Create new_rt_table
+  copy:
+    dest: /etc/iproute2/rt_tables
+    content: |
+      1 new_rt_table
+    backup: yes
+  become: true
+  tags: requisite
+
+- name: Create aws-escalation script for RedHat family
+  template:
+    src: aws-escalation_centos.j2
     dest: /usr/local/bin/aws-escalation.sh
     owner: root
     group: root
     mode: 0755
+  become: true
+  when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
-- name: Create aws-de-escalation script
-  become: true
+- name: Create aws-escalation script for Debian family
   template:
-    src: aws-de-escalation.j2
+    src: aws-escalation_ubuntu.j2
+    dest: /usr/local/bin/aws-escalation.sh
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite
+
+- name: Create aws-de-escalation script for RedHat family
+  template:
+    src: aws-de-escalation_centos.j2
     dest: /usr/local/bin/aws-de-escalation.sh
     owner: root
     group: root
     mode: 0755
+  become: true
+  when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
-- name: Create route file for default interface
+- name: Create aws-de-escalation script for Debian family
+  template:
+    src: aws-de-escalation_ubuntu.j2
+    dest: /usr/local/bin/aws-de-escalation.sh
+    owner: root
+    group: root
+    mode: 0755
   become: true
+  when: (ansible_facts['os_family'] == "Debian")
+  tags: requisite
+
+- name: Create route file for default interface for RedHat family
   template: 
     src: routedefault.j2
     dest: /etc/sysconfig/network-scripts/route-{{ pri_net_int }} 
     owner: root
     group: root
     mode: 0644
+  become: true
+  when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
-- name: Create route file for vip interface
-  become: true
+- name: Create route file for vip interface for RedHat family
   template: 
     src: routevip.j2
     dest: /etc/sysconfig/network-scripts/route-{{ sec_net_int }}
     owner: root 
     group: root 
     mode: 0644
+  become: true
+  when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
-- name: Create rule file for default interface
-  become: true
+- name: Create rule file for default interface for RedHat family
   template:
     src: ruledefault.j2
     dest: /etc/sysconfig/network-scripts/rule-{{ pri_net_int }}
     owner: root
     group: root
     mode: 0644
+  become: true
+  when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
-- name: Create rule file for vip interface
-  become: true
+- name: Create rule file for vip interface for RedHat family
   template:
     src: rulevipdev.j2
     dest: /etc/sysconfig/network-scripts/rule-{{ sec_net_int }}
     owner: root
     group: root
     mode: 0644
+  become: true
+  when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
-- name: Create vip interface config file
-  become: true
+- name: Create vip interface config file for RedHat family
   template:
     src: ifcfg-eth.j2
     dest: /etc/sysconfig/network-scripts/ifcfg-{{ sec_net_int  }}
     owner: root
     group: root
     mode: 0644
+  become: true
+  when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
-- name: Insert 100 t1 entry in /etc/iproute2/rt_tables
-  become: true
+- name: Insert 100 t1 entry in /etc/iproute2/rt_tables for RedHat family
   lineinfile:
     path: /etc/iproute2/rt_tables
     line: '100 t1'
+  become: true
+  when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
-- name: Insert 101 t2 entry in /etc/iproute2/rt_tables
-  become: true
+- name: Insert 101 t2 entry in /etc/iproute2/rt_tables for RedHat family
   lineinfile:
     path: /etc/iproute2/rt_tables
     line: '101 t2'
+  when: (ansible_facts['os_family'] == "RedHat")
   tags: requisite
 
-- name: Copy sysctl parameter
   become: true
-  template:
-    src: 98-2netaws.conf.j2
-    dest: /etc/sysctl.d/98-2netaws.conf
-    owner: root
-    group: root
-    mode: 0644
-  tags: requisite

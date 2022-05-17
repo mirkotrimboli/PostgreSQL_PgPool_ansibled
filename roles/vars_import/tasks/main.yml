@@ -1,6 +1,6 @@
 ---
 - name: Import "{{vars_import}}"
-  template:
+  copy:
     src: "{{ lookup('file', 'packages/{{item}}') }}"
     dest: "{{vars_dest}}"
     owner: root

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sleep 3
+/sbin/ip addr add {{ipVIP}}{{subnet}} dev {{ sec_net_int }}
+/sbin/ip link set dev {{ sec_net_int }} up
+/sbin/ip rule add from all fwmark 1 table new_rt_table
+/sbin/ip route add default dev {{ sec_net_int }} table new_rt_table

@@ -17,8 +17,9 @@ vars_package:
   - postgresql-{{vars_version}}-pgpool2
   - net-tools
   - arping
-  - unzip
-  - cloud-utils
+#  - unzip # ONLY for AWS environment
+#  - cloud-utils # ONLY for AWS environment
+#  - iptables-persistent # ONLY for Ubuntu S.O.
 #  - ceph-common # ONLY for Ceph integration
 #  - systemd-timesyncd # ONLY for NTP integrtion
 #  - chrony  # ONLY for NTP integrtion for AWS environment
@@ -36,6 +37,7 @@ host1: "" # Edit with hostname of node 1
 host2: "" # Edit with hostname of node 2
 host3: "" # Edit with hostname of node 3
 network: "IP.IP.IP.IP"
+subnet: "/subnet"
 #pri_net_int: "ens5" # ONLY for AWS environment
 #sec_net_int: "eth0" # ONLY for AWS environment
 #aws_netint_id: "eni-08770b5291f7eee93" # ONLY for AWS environment

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+/sbin/ip route del default dev {{ sec_net_int }} table new_rt_table
+/sbin/ip rule del from all fwmark 1 table new_rt_table
+/sbin/ip addr del {{ipVIP}}{{subnet}} dev {{ sec_net_int }}
+/sbin/ip link set dev {{ sec_net_int }} down
