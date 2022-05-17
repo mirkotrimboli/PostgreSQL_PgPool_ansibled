@@ -87,9 +87,9 @@ host    all             all             ::1/128                 trust
 local   replication     all                                     trust
 host    replication     all             127.0.0.1/32            trust
 host    replication     all             ::1/128                 trust
-host    replication     all             {{network}}/24          trust
-host    replication     pgpool          {{network}}/24          trust
-host    replication     postgres        {{network}}/24          trust
-host    all             pgpool          {{network}}/24          trust
-host    all             postgres        {{network}}/24          trust
+host    replication     all             {{network}}{{subnet}}          trust
+host    replication     pgpool          {{network}}{{subnet}}          trust
+host    replication     postgres        {{network}}{{subnet}}          trust
+host    all             pgpool          {{network}}{{subnet}}          trust
+host    all             postgres        {{network}}{{subnet}}          trust
 host    all             all             10.0.0.0/8              md5

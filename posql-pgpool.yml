@@ -4,7 +4,6 @@
   roles:
     - { role: vars_user_cando_sudo, tags: [ 'prerequisite' ] }
     - { role: ensure_minimal_installations, tags: [ 'prerequisite' ] }
-    - { role: vars_import, tags: [ 'prerequisite' ] }
     - { role: update_systems, tags: [ 'prerequisite' ] }
     - { role: secure_minimal, tags: [ 'prerequisite' ] }
 #    - { role: reboot, tags: [ 'prerequisite' ] }

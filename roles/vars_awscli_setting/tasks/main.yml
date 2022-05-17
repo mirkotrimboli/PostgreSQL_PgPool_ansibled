@@ -1,8 +1,8 @@
 ---
 - name: Unarchive awscliv2.zip in {{vars_dest}}
   unarchive:
-    src: "{{vars_dest}}/awscliv2.zip"
-    dest: "/home/{{vars_user}}"
+    src: "{{ lookup('file', 'packages/awscliv2.zip') }}"
+    dest: "{{vars_dest}}"
     owner: root
     group: root
     mode: '0755'
@@ -22,7 +22,7 @@
   tags: requisite
 
 - name: Installing code
-  shell: "/home/{{vars_user}}/aws/install"
+  shell: "{{vars_dest}}/aws/install"
   when: foundedDir.stat.isdir is not defined
   become: true
   tags: requisite
